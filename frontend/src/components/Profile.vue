@@ -4,15 +4,15 @@
    <br/><br/><br/><br/><br/><br/><br/><br/>
    <div class="auth-wrapper">
     <div class="auth-inner">
-    <form @submit.prevent="btnModify">
+    <form>
         <h3>Mon profil</h3>
          <div class="form-group">
             <label>Prénom</label>
-            <input type="text" class="form-control" v-model="first_name" />
+            <input type="text" class="form-control" v-model="prenom" />
         </div>
          <div class="form-group">
             <label>Nom</label>
-            <input type="text" class="form-control" v-model="last_name" />
+            <input type="text" class="form-control" v-model="nom" />
         </div>
         <div class="form-group">
             <label>Email</label>
@@ -23,7 +23,7 @@
             <input type="password" class="form-control" v-model="password"/>
         </div>
         <br/>
-        <button class="btn btn-dark btn-block">Modifier mon profil</button>
+        <button class="btn btn-dark btn-block"  @click.prevent="modifyProfil(user)">Modifier mon profil</button>
     </form>
     </div>
    </div>
@@ -32,13 +32,49 @@
 
 <script>
 import Header from './Header.vue'
+import axios from 'axios'
 
  export default {
         name: 'Profile',
         components: {
             Header
-        }
+        },
+         data(){
+      return{
+          prenom:"",
+          nom:"",
+          email:"",
+          password:""
+     }
+  },
+created(){
+const user= localStorage.getItem('user');
+
+  axios.get("http://localhost:3000/api/auth/"+ user, {
+      headers: {
+          Authorization: "Bearer " + localStorage.token,
+      },
+    })
+    .then((response)=> 
+    (this.user = response.data))
+    .catch((err) => console.log(err));
+},
+methods:{
+   modifyProfil(user){
+   
+    axios.put('http://localhost:3000/api/auth/'+ user.id,{
+     email: user.email},
+      {headers: {
+                Authorization: "Bearer " + localStorage.token,
+            },
+      })
+    .then((response)=>{console.log(response)
+    this.email=response.email},
+    window.alert('modification effectué'))
+    .catch((err)=> console.log(err))
     }
+  }
+}
 </script>
 
 <style scoped>

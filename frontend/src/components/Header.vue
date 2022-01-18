@@ -21,7 +21,7 @@ export default {
 
     methods: {
         disconnect(){
-            localStorage.removeItem('email');
+            localStorage.removeItem('user');
             location.href = "/login";
         }
     }

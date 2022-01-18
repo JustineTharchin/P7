@@ -1,7 +1,7 @@
 <template>
 <div id="app">
    <Header/>
-    <section class="hero">
+    <section  @submit.prevent="postComment()" class="hero">
          <div class="container">
               <div class="cardbox shadow-lg bg-white">
                   <div class="media-body">
@@ -9,10 +9,9 @@
                     </div>
                       <div class="cardbox-comments">
                           <div class="search">
-                              <input placeholder="Write a comment" type="text">
-                              <button><i class="fa fa-camera"></i></button>
+                              <input placeholder="Write a comment" type="text" id="post" v-model="post">
                             </div><!--/. Search -->
-                            <button class="btn btn-dark btn-block" style="margin-left: flex;">Publier</button>  
+                            <button v-on:click="sendMessage" class="btn btn-dark btn-block" style="margin-left: flex;">Publier</button>  
                         </div><!--/ cardbox -->
             </div>
         </div><!--/ container -->
@@ -39,22 +38,18 @@
                                       <small><span><i class="icon ion-md-time"></i> 10 hours ago</span></small>
                                   </div>
                     <div class="cardbox-item">
-                    <p>Hello, ceci est le 1er commentaire posté !</p>
+                      <p>Hello, ceci est le 1er commentaire posté !</p>
                     </div><!--/ cardbox-item -->
                           <div class="cardbox-base">
-                              <ul class="float-right">
-                                <li><a><i class="fa fa-comments"></i></a></li>
-                                <li><a><em class="mr-5">12</em></a></li>
-                              </ul>
                           </div><!--/ cardbox-base -->
                             <div class="cardbox-comments">
                               <span class="comment-avatar float-left">
-                                <a href=""><img class="rounded-circle" src="http://www.themashabrand.com/templates/bootsnipp/post/assets/img/users/6.jpg" alt="..."></a>                            
+                                <a href=""><img class="rounded-circle" src="http://www.themashabrand.com/templates/bootsnipp/post/assets/img/users/6.jpg" alt="..."></a>                           
                               </span>
                                 <div class="search">
                                   <input placeholder="Write a comment" type="text">
-                                  <button><i class="fa fa-camera"></i></button>
                                 </div><!--/. Search -->
+                                   <button class="btn btn-dark btn-block" style="margin-left: flex;">Publier</button>  
                               </div><!--/ cardbox-like -->			  
                             </div><!--/ cardbox -->
                           </div><!--/ col-lg-6 -->
@@ -73,11 +68,37 @@ import Header from './Header.vue'
         components: {
           Header
           },
-          created() {
-            const response = axios.get('/user');
-            console.log(response);
-          }
+          data() {
+            return {
+                post: ""
+            }
+        },
+        mounted() {
+        this.userId = JSON.parse(localStorage.getItem("user"));
+        console.log(this.userId)
+    },
+
+        methods: {
+         postComment(){
+         axios.post('http://localhost:3000/api/post/', {
+                    post: this.post
+                })
+                .then(res => res.json())
+                .then((res) => {
+                    console.log(res)
+                    if (res.ok) {
+                        window.location.reload();
+                        this.inputMessage = {} // Retour à 0 des inputs //
+                    } else {
+                        alert("Message bien reçu");
+                    }
+                })
+                .then(this.$router.push("/list"))
+                .catch(error => console.log(error))
+        }
       }
+      
+    }
 </script>
 
 <style>
