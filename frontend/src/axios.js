@@ -1,4 +1,8 @@
 import axios from 'axios'
 
-axios.defaults.baseUrl = 'http://localhost:3000/';
-axios.defaults.headers.common['Authorization'] = 'Bearer' + localStorage.getItem('email');
+export default axios.create({
+    baseURL: "http://localhost:3000/api",
+    headers: {
+      "Content-type": "application/json"
+    }
+});

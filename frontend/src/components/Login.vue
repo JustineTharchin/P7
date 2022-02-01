@@ -1,10 +1,10 @@
 <template>
  <div id="app">
-     <br/><br/><br/><br/><br/><br/><br/><br/><br/>
   <div class="auth-wrapper">
     <div class="auth-inner">
     <form @submit.prevent="login()">
         <div class="form-group">
+          <div class="error-message">{{message}}</div>
             <label>Email</label>
             <input type="email" class="form-control" id="email" v-model="email" />
         </div>
@@ -12,9 +12,9 @@
             <label>Mot de passe</label>
             <input type="password" class="form-control" id="password" v-model="password"/>
         </div>
-        <br/>
-        
-        <div class="error-message">{{message}}</div>
+          <div class="signup">
+            <a href="signup">Pas encore inscrit ?</a>
+          </div>
         <button class="btn btn-dark btn-block" type="submit">Connexion</button>
     </form>
     </div>
@@ -23,33 +23,25 @@
 </template>
 
 <script>
-import axios from 'axios'
+  export default {
+    name: 'Login',
+     data() {
+       return {
+            email: "",
+            password: ""
+       }
+    },
+    methods: {
+      login() {
+        const email = this.email;
+        const password = this.password;
 
- export default {
-        name: 'Login',
-        data(){
-            return {
-                email:'',
-                password:'',
-                message:''
-            }
-        },
-     methods: {
-         login(){
-          const email = document.getElementById("email").value;
-          const password = document.getElementById("password").value;
-          axios.post('http://localhost:3000/api/auth/login', {
-                    email,
-                    password
-                })
-
-            .then(res => {
-              localStorage.setItem('user', JSON.stringify(res.data));
-                this.$router.push('/user');
-            })
-          }
-        }
+        this.$store.dispatch('login', { email, password })
+          .then(() => this.$router.push('/post'))
+          .catch(err => console.log(err))
+      }
     }
+  }
 </script>
 
 <style scoped>
@@ -99,7 +91,11 @@ import axios from 'axios'
     padding: 40px 55px 45px 55px;
     border-radius: 15px;
     transition: all .3s;
-  }
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
 
   .auth-wrapper h3 {
     text-align: center;

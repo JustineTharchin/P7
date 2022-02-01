@@ -1,6 +1,5 @@
 <template>
 <div id="app">
-     <br/><br/><br/><br/><br/><br/><br/><br/>
   <div class="auth-wrapper">
     <div class="auth-inner">
     <form @submit.prevent="signup()">
@@ -24,8 +23,11 @@
             <label>Confirmation du mot de passe</label>
             <input type="password" class="form-control" v-model="password_confirm" />
         </div>
-        <br/>
-        <button class="btn btn-dark btn-block">S'incrire</button>
+        <div class="login">
+            <a href="login">Déjà un compte ?</a>
+          </div>
+        <button class="btn btn-dark btn-block" type="submit">S'incrire</button>
+           <div class="error-message">{{message}}</div>
         <p>*Veuillez remplir tous les champs du formulaire</p>
     </form>
     </div>
@@ -34,8 +36,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
     export default {
         name: 'Signup',
         data() {
@@ -44,20 +44,25 @@ import axios from 'axios'
                 nom: '',
                 email: '',
                 password:'',
-                password_confirm:''
+                password_confirm:'',
+                message:''
             }
         },
         methods: {
          signup(){
-         axios.post('http://localhost:3000/api/auth/signup', {
-                    prenom: this.prenom,
-                    nom: this.nom,
-                    email: this.email,
-                    password: this.password,
-                    password_confirm: this.password_confirm
+         const dataUser = {
+                prenom: this.prenom,
+                nom: this.nom,
+                email: this.email,
+                password: this.password,
+                password_confirm: this.password_confirm
+           }
+              this.$store.dispatch('signup', dataUser)
+                .then(() => this.$router.push('/login'))
+                .catch((error) => {
+                  (error.response.status === 401) 
+                    this.message = "Le formulaire n'a pas été correctement rempli";
                 })
-                this.$router.push('/login');
-               
             }
         }
     }
@@ -110,6 +115,10 @@ import axios from 'axios'
     padding: 40px 55px 45px 55px;
     border-radius: 15px;
     transition: all .3s;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   .auth-wrapper h3 {
