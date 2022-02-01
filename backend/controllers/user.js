@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv');
-// const User = require('../models/sequelize');
 const {User} = require('../models');
 
 
@@ -12,8 +11,6 @@ const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+")
 exports.signup = (req, res, next) => {
     const email    = req.body.email;
     const password = req.body.password;
-
-    console.log(req.body)
 
     if(email == null || email == '' || password == null || password == '') {
         return res.status(400).json({ error: 'Tous les champs doivent être renseignés' });
@@ -49,11 +46,6 @@ exports.signup = (req, res, next) => {
                 console.log(error)
                 res.status(500).json({ error: 'Une erreur s\'est produite lors de la création de votre compte' })
             });
-       // } else {
-         //   return res.status(404).json({ error: 'Cet utilisateur existe déjà' })
-        //}
-    //})
-    //.catch(error => res.status(500).json({ error: 'Une erreur s\'est produite !' }));
 };
 
 
@@ -100,20 +92,31 @@ exports.getAllUsers = (req, res, next) => {
 };
 
 
-exports.updateUser = (req, res, next) => {
+exports.updateUser = async (req, res, next) => {
   try {
-    User.update({
+    await User.update({
+        prenom: req.body.prenom,
+        nom: req.body.nom,
         email: req.body.email
     }, {
         where: {
             id: (req.params.id)
         }
     });
-
     return res.status(200).send({
-        message: "email modifiée"
+        message: "Modifiée"
     })
-} catch (err) {
-    return res.status(500).json(err);
-}
-}
+      } catch (err) {
+        return res.status(500).json(err);
+      }
+};
+
+exports.deleteUser = (req, res, next) => {
+    User.findOne({ where: { id: req.params.id }})  
+      .then((user) => {
+          User.destroy({ where: { id: req.params.id }}) // Méthode //
+                    .then(() => res.status(200).json({ message: 'Compte supprimé' }))
+                    .catch(error => res.status(400).json({ error }));
+                })
+            .catch (error => res.status(500).json({ error }));
+};

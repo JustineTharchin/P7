@@ -19,11 +19,21 @@ const User = sequelize.define('User', {
       password: {
           type: DataTypes.STRING
       }
-  }, {
+  });
+    User.associate = (models) => {
+      User.hasMany(models.Post,{
+        constraints: true,
+        hooks: true
+      })
+      User.hasMany(models.Comment,{
+        constraints: true,
+        hooks: true
+      })
+  },
+   {
     sequelize,
     modelName: 'User'
-  }
-);
+  };
 
 return User;
 };
