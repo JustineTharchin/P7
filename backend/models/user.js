@@ -21,14 +21,8 @@ const User = sequelize.define('User', {
       }
   });
     User.associate = (models) => {
-      User.hasMany(models.Post,{
-        constraints: true,
-        hooks: true
-      })
-      User.hasMany(models.Comment,{
-        constraints: true,
-        hooks: true
-      })
+      User.hasMany(models.Post)
+      User.hasMany(models.Comment)
   },
    {
     sequelize,

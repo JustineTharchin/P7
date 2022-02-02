@@ -18,15 +18,13 @@ module.exports = (sequelize, DataTypes) => {
   });
      Post.associate = (models) => {
       Post.belongsTo(models.User,{
-        foreignKey: 'UserId',
-        constraints: true,
+        allowNull: false,
         onDelete: 'CASCADE',
-        hooks: true
       })
       Post.hasMany(models.Comment)
     }, {
-  sequelize,
-  modelName: 'Post'
+  //sequelize,
+  //modelName: 'Post'
   };
   return Post;
 };
